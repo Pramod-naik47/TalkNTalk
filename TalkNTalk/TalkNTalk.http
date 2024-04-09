@@ -1,0 +1,6 @@
+@TalkNTalk_HostAddress = http://localhost:5276
+
+GET {{TalkNTalk_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
