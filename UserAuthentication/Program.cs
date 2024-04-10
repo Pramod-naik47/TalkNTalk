@@ -1,4 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using UserAuthentication.Interfaces;
+using UserAuthentication.Middleware;
+using UserAuthentication.Models;
 using UserAuthentication.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,10 +10,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<IUserInterface, UserService>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IUserInterface, UserService>();
+builder.Services.AddDbContext<TalkNtalkContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
 
 var app = builder.Build();
 
@@ -21,6 +26,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
