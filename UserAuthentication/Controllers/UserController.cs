@@ -6,13 +6,10 @@ namespace UserAuthentication.Controllers;
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly ILogger<UserController> _logger;
-
-    public UserController(ILogger<UserController> logger)
-    {
-        _logger = logger;
-    }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     [HttpGet(Name ="Login")]
     public async Task<IActionResult> Login()
     {
