@@ -1,3 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using UserManagementService.Interface;
+using UserManagementService.Models;
+using UserManagementService.Service;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +11,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IUser, UserService>();
+builder.Services.AddDbContext<TalkNtalkContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
+
 
 var app = builder.Build();
 
