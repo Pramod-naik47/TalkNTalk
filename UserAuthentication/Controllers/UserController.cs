@@ -10,7 +10,7 @@ namespace UserAuthentication.Controllers;
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
-    private  IUser _user { get; }
+    private IUser _user { get; }
     private IToken _token { get; }
     private readonly IConfiguration _configuration;
     public UserController(IUser user, IToken token, IConfiguration configuration)
@@ -39,11 +39,14 @@ public class UserController : ControllerBase
                                             },
                                             isUser.UserName,
                                             isUser.UserId);
-            var result = new TokenModel
+            var result = new UserModel
             {
                 Token = token,
                 IsAuthenticated = true,
-                Message = "Login successfull"
+                Message = "Login successfull",
+                UserId = isUser.UserId,
+                UserName = isUser.UserName,
+                Name = isUser.Name,
             };
             return Ok(result);
         }

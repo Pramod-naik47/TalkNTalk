@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using UserManagementService.Interface;
+using UserManagementService.Middleware;
 using UserManagementService.Models;
 using UserManagementService.Service;
 
@@ -14,16 +15,24 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUser, UserService>();
 builder.Services.AddDbContext<TalkNtalkContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
 
+//Adding cors
+builder.Services.AddCors((setup) =>
+{
+    setup.AddPolicy("default", (options) =>
+    {
+        options.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+    });
+});
 
 var app = builder.Build();
-
+app.UseCors("default");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
