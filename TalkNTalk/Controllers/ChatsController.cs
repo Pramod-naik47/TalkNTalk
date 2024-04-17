@@ -1,21 +1,36 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TalkNTalk.Interface;
+using TalkNTalk.Models;
 
 namespace TalkNTalk.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("[controller]")]
     public class ChatsController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
+        private IChat _chat { get; }
+        public ChatsController(IChat chat)
         {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+            _chat = chat;
+        }
 
-        private readonly ILogger<ChatsController> _logger;
-
-        public ChatsController(ILogger<ChatsController> logger)
+        [HttpGet("GetChats")]
+        public async Task<IActionResult> GetChats()
         {
-            _logger = logger;
+            IEnumerable<User> chats = await _chat.GetChats();
+            IEnumerable<UserChat> userChat = chats.Select(c => new UserChat
+            {
+                UserId = c.UserId,
+                UserName = c.UserName,
+                Name = c.Name
+            });
+
+            if (userChat.Any())
+                return Ok(userChat);
+            else 
+                return NoContent();
         }
     }
 }
