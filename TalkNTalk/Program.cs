@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using TalkNTalk.Hubs;
 using TalkNTalk.Interface;
 using TalkNTalk.Middleware;
 using TalkNTalk.Models;
@@ -17,14 +18,17 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TalkNtalkContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
 builder.Services.AddScoped<IChat, ChatService>();
-
+builder.Services.AddSignalR();
 
 //Adding cors
 builder.Services.AddCors((setup) =>
 {
     setup.AddPolicy("default", (options) =>
     {
-        options.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+        options.WithOrigins("http://localhost:3000")
+               .AllowAnyHeader()
+               .AllowAnyMethod()
+               .AllowCredentials();
     });
 });
 
@@ -59,4 +63,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.MapHub<ChatHub>("/chat");
 app.Run();

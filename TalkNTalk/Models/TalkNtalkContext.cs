@@ -17,11 +17,13 @@ public partial class TalkNtalkContext : DbContext
 
     public virtual DbSet<Chat> Chats { get; set; }
 
+    public virtual DbSet<Connection> Connections { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-JH7IE1R\\SQLEXPRESS;Database=TalkNTalk;Encrypt=false;TrustServerCertificate=true;Trusted_Connection=True");
+    //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=DESKTOP-JH7IE1R\\SQLEXPRESS;Database=TalkNTalk;TrustServerCertificate=true;Trusted_Connection=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -40,6 +42,27 @@ public partial class TalkNtalkContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.Chats)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK_userId");
+        });
+
+        modelBuilder.Entity<Connection>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__connecti__3213E83FAD49D77E");
+
+            entity.ToTable("connections");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ChatRoom)
+                .HasMaxLength(500)
+                .IsUnicode(false)
+                .HasColumnName("chat_room");
+            entity.Property(e => e.ConnectionId)
+                .HasMaxLength(1000)
+                .IsUnicode(false)
+                .HasColumnName("connection_id");
+            entity.Property(e => e.UserName)
+                .HasMaxLength(500)
+                .IsUnicode(false)
+                .HasColumnName("user_name");
         });
 
         modelBuilder.Entity<User>(entity =>
