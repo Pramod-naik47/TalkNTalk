@@ -1,5 +1,5 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using UserManagementService.Interface;
 using UserManagementService.Models;
 
@@ -9,10 +9,10 @@ namespace UserManagementService.Controllers;
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly IUser _user;
+    private readonly IUser _userService;
     public UserController(IUser user)
     {
-        this._user = user;
+        this._userService = user;
     }
 
     [HttpPost("Signup")]
@@ -20,10 +20,10 @@ public class UserController : ControllerBase
     {
         if (!string.IsNullOrWhiteSpace(user?.UserName) && !string.IsNullOrWhiteSpace(user?.Password))
         {
-            bool isUserExist = await _user.IsUserExist(user.UserName);
+            bool isUserExist = await _userService.IsUserExist(user.UserName);
             if (!isUserExist)
             {
-                bool result = await _user.CreateUser(user);
+                bool result = await _userService.CreateUser(user);
                 if (result)
                 {
                     return Ok(new CommonResponse
@@ -38,6 +38,32 @@ public class UserController : ControllerBase
                 StatusCode = 200,
                 Message = "User alread exist"
             });
+        }
+        return BadRequest();
+    }
+
+    [Authorize]
+    [HttpPut("UpdateUser")]
+    public async Task<IActionResult> UpdateUser([FromBody]UserUpdateModel userUpdate)
+    {
+        if (userUpdate is not null)
+        {
+            User? user = await _userService.GetUserById(userUpdate.UserId);
+            if (user is not null)
+            {
+                user.Name = userUpdate.Name;
+                user.Password = !string.IsNullOrWhiteSpace(userUpdate.Password) ? BCrypt.Net.BCrypt.HashPassword(userUpdate.Password)  : user.Password;
+                User? updatedUser = await _userService.UpdateUser(user);
+
+                UserResponse userResponse  = new UserResponse
+                {
+                    UserId = updatedUser.UserId,
+                    UserName = updatedUser.UserName,
+                    Name = updatedUser.Name
+                };
+
+                return Ok(userResponse);
+            } 
         }
         return BadRequest();
     }

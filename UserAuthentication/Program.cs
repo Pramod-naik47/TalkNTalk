@@ -16,7 +16,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUser, UserService>();
 builder.Services.AddScoped<IToken, TokenService>();
-builder.Services.AddDbContext<TalkNtalkContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
+builder.Services.AddDbContext<TalkNtalkContext>(options => {
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString"));
+    options.EnableSensitiveDataLogging();
+});
 
 //Adding cors
 builder.Services.AddCors((setup) =>

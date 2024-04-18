@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using UserManagementService.Interface;
 using UserManagementService.Middleware;
 using UserManagementService.Models;
@@ -13,15 +16,36 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUser, UserService>();
-builder.Services.AddDbContext<TalkNtalkContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
+builder.Services.AddDbContext<TalkNtalkContext>(options => {
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString"));
+    options.EnableSensitiveDataLogging();
+});
 
 //Adding cors
 builder.Services.AddCors((setup) =>
 {
     setup.AddPolicy("default", (options) =>
     {
-        options.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+        options.WithOrigins("http://localhost:3000")
+               .AllowAnyHeader()
+               .AllowAnyMethod()
+               .AllowCredentials();
     });
+});
+
+//Validating token
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new()
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Aud3"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["Jwt:key"]))
+    };
 });
 
 var app = builder.Build();

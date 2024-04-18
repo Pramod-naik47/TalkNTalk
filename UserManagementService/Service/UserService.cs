@@ -38,4 +38,15 @@ public class UserService : IUser
             return true;
         return false;
     }
+
+    public async Task<User?> UpdateUser(User user)
+    {
+        _dbContext.Users.Update(user);
+        await _dbContext.SaveChangesAsync();
+        return await GetUserById(user.UserId);
+    }
+    public async Task<User?> GetUserById(int userId)
+    {
+        return await _dbContext.Users.Where(u => u.UserId == userId).FirstOrDefaultAsync();
+    }
 }

@@ -16,7 +16,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<TalkNtalkContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
+builder.Services.AddDbContext<TalkNtalkContext>(options => {
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString"));
+    options.EnableSensitiveDataLogging();
+});
 builder.Services.AddScoped<IChat, ChatService>();
 builder.Services.AddSignalR();
 
@@ -32,6 +35,7 @@ builder.Services.AddCors((setup) =>
     });
 });
 
+//Validating the barrier token
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new()
