@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using TalkNTalk.Models;
 
 namespace TalkNTalk.Hubs;
 
+[Authorize]
 public class ChatHub : Hub
 {
     private TalkNtalkContext _dbContext { get; }
