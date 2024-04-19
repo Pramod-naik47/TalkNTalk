@@ -20,10 +20,12 @@ public class ExceptionHandlingMiddleware
     {
         try
         {
+            //If no error invoiking next middleware in the pipeline
             await _requestDelegate.Invoke(context);
         }
         catch (Exception ex) 
         {
+            //Logging error for the debugging purpose
             _logger.LogInformation($"Reaquest {context.Request.Path} - {context.Request.Method} failed due to error {ex.Message} \n stackTrace {ex.StackTrace}");
             ErrorModel errorModel = new ErrorModel
             {
@@ -38,6 +40,7 @@ public class ExceptionHandlingMiddleware
                 errorModel.Message = ex.Message;
                 errorModel.StackTrace = ex.StackTrace;
             }
+            //attaching error to api response
             await context.Response.WriteAsJsonAsync(errorModel);
         }
     }

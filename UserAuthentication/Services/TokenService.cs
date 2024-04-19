@@ -14,6 +14,16 @@ public class TokenService : IToken
     {
         _configuration = configuration;
     }
+
+    /// <summary>
+    ///  Takes the required params and return JWT token
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="issuer"></param>
+    /// <param name="audience"></param>
+    /// <param name="userName"></param>
+    /// <param name="userId"></param>
+    /// <returns>JWT token</returns>
     public string BuildToken(string key, string issuer, IEnumerable<string> audience, string userName, long userId)
     {
         var claims = new List<Claim>
@@ -27,7 +37,7 @@ public class TokenService : IToken
         var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-        var tokenDescriptor = new JwtSecurityToken(issuer, issuer, claims, notBefore: DateTime.Now, expires: DateTime.Now.Add(new TimeSpan(20, 30, 0)),
+        var tokenDescriptor = new JwtSecurityToken(issuer, issuer, claims, notBefore: DateTime.Now, expires: DateTime.Now.Add(new TimeSpan(24, 00, 00)),
             signingCredentials: credentials);
         return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
     }

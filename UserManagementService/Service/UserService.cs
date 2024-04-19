@@ -13,6 +13,11 @@ public class UserService : IUser
     {
         _dbContext = talkNtalkContext;
     }
+    /// <summary>
+    /// Create user
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns></returns>
     public async Task<bool> CreateUser(SignupModel user)
     {
         if (user is not null)
@@ -30,6 +35,11 @@ public class UserService : IUser
         return false;
     }
 
+    /// <summary>
+    /// Check the user exist in our database by user name
+    /// </summary>
+    /// <param name="userName"></param>
+    /// <returns></returns>
     public async Task<bool> IsUserExist(string userName)
     {
         User? user = await _dbContext.Users.Where(u => u.UserName == userName).FirstOrDefaultAsync();
@@ -37,5 +47,27 @@ public class UserService : IUser
         if (user is not null)
             return true;
         return false;
+    }
+
+    /// <summary>
+    /// Update the given user
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns></returns>
+    public async Task<User?> UpdateUser(User user)
+    {
+        _dbContext.Users.Update(user);
+        await _dbContext.SaveChangesAsync();
+        return await GetUserById(user.UserId);
+    }
+
+    /// <summary>
+    /// Get the user by given Id
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public async Task<User?> GetUserById(int userId)
+    {
+        return await _dbContext.Users.Where(u => u.UserId == userId).FirstOrDefaultAsync();
     }
 }
