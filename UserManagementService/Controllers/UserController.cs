@@ -15,6 +15,11 @@ public class UserController : ControllerBase
         this._userService = user;
     }
 
+    /// <summary>
+    /// Create new user
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns></returns>
     [HttpPost("Signup")]
     public async Task<IActionResult> SignUp(SignupModel user)
     {
@@ -42,12 +47,18 @@ public class UserController : ControllerBase
         return BadRequest();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="userUpdate"></param>
+    /// <returns></returns>
     [Authorize]
     [HttpPut("UpdateUser")]
     public async Task<IActionResult> UpdateUser([FromBody]UserUpdateModel userUpdate)
     {
         if (userUpdate is not null)
         {
+            //Get the requested user first
             User? user = await _userService.GetUserById(userUpdate.UserId);
             if (user is not null)
             {

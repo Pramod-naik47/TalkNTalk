@@ -14,6 +14,16 @@ public class TokenService : IToken
     {
         _configuration = configuration;
     }
+
+    /// <summary>
+    ///  Takes the required params and return JWT token
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="issuer"></param>
+    /// <param name="audience"></param>
+    /// <param name="userName"></param>
+    /// <param name="userId"></param>
+    /// <returns>JWT token</returns>
     public string BuildToken(string key, string issuer, IEnumerable<string> audience, string userName, long userId)
     {
         var claims = new List<Claim>

@@ -32,6 +32,11 @@ public class ChatHub : Hub
         return base.OnDisconnectedAsync(exception);
     }
 
+    /// <summary>
+    /// Joining the room
+    /// </summary>
+    /// <param name="userConnection"></param>
+    /// <returns></returns>
     public async Task JoinRoom(UserConnection userConnection)
     {
         await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.ChatRoom);
@@ -50,6 +55,11 @@ public class ChatHub : Hub
         await SendUsersConnected(userConnection.ChatRoom);
     }
 
+    /// <summary>
+    /// Send messagein chat room
+    /// </summary>
+    /// <param name="message"></param>
+    /// <returns></returns>
     public async Task SendMessage(string message)
     {
         Connection? connection = await _dbContext.Connections.Where(c => c.ConnectionId == Context.ConnectionId).FirstOrDefaultAsync();
@@ -59,6 +69,11 @@ public class ChatHub : Hub
         }
     }
 
+    /// <summary>
+    /// Get all the users connected to the chat room
+    /// </summary>
+    /// <param name="room"></param>
+    /// <returns></returns>
     public Task SendUsersConnected(string room)
     {
         var users =  _dbContext.Connections.Where(c => c.ChatRoom == room).Select(c => c.UserName).ToList();

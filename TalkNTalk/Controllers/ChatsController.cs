@@ -16,6 +16,10 @@ namespace TalkNTalk.Controllers
             _chat = chat;
         }
 
+        /// <summary>
+        /// Get the user from database
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetChats")]
         public async Task<IActionResult> GetChats()
         {
